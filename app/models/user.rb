@@ -32,12 +32,3 @@ class User < ApplicationRecord
     SecureRandom.hex(10)
   end
 end
-
-
-
-# actual and expected  income / expense -> 2 set actual and projected income 
-# income_type -> actual and projected
-# actual->{  logic
-# # } the user can get the salary any day in one month from (1 to 30/31) so we have to update the moth accordingly 
-# once user is adding the salary monthly suppose on 12 july he got his salary added the income in actual income 
-# now user is getting the salary again on 12th august it should show the same just it will be update month 

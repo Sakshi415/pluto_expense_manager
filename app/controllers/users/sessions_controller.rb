@@ -23,9 +23,9 @@ class Users::SessionsController < Devise::SessionsController
 
   private
 
-  def respond_with(resource, _opts = {})
-    render json: { message: 'Successfully logged in', user: resource }
-  end
+  # def respond_with(resource, _opts = {})
+  #   render json: { message: 'Successfully logged in', user: resource }
+  # end
 
   def respond_to_on_destroy
     sign_out current_user

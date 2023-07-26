@@ -1,8 +1,5 @@
 class ApplicationController < ActionController::API
-    #before_action :authenticate_user!
-  
-    private
-  
+
     def authenticate_user!
       token = request.headers['Authorization']&.split(' ')&.last
       decoded_token = JWT.decode(token, Devise.secret_key, true, algorithm: 'HS256')
@@ -11,5 +8,5 @@ class ApplicationController < ActionController::API
     rescue JWT::DecodeError, ActiveRecord::RecordNotFound
       render json: { error: 'Unauthorized' }, status: :unauthorized
     end
-  end
+end
   

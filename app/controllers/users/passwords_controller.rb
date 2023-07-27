@@ -12,7 +12,8 @@ class Users::PasswordsController < Devise::PasswordsController
     user = User.find_by(email: params[:user][:email]) # if present find user by email
   
     if user.present?
-      generated_token = user.generate_password_token! # generate pass token
+      generated_token = user.generate_password_token!
+      user.save # generate pass token
       UserMailer.password_reset_email(user).deliver # send the password reset email
       render json: {token: generated_token,  status: 'ok' }, status: :ok
     else
@@ -42,34 +43,34 @@ class Users::PasswordsController < Devise::PasswordsController
       render json: {error:  ['Link not valid or expired. Try generating a new link.']}, status: :not_found
     end
   end
-#   # # GET /resource/password/new
-#   def new
-#     super
-#   end
+  # # GET /resource/password/new
+  def new
+    super
+  end
 
-#   # POST /resource/password
-#   def create
-#     super
-#   end
+  # POST /resource/password
+  def create
+    super
+  end
 
-#   # GET /resource/password/edit?reset_password_token=abcdef
-#   def edit
-#     super
-#   end
+  # GET /resource/password/edit?reset_password_token=abcdef
+  def edit
+    super
+  end
 
-#   # PUT /resource/password
-#   def update
-#     super
-#   end
+  # PUT /resource/password
+  def update
+    super
+  end
 
-#   # protected
+  # protected
 
-#   def after_resetting_password_path_for(resource)
-#     super(resource)
-#   end
+  def after_resetting_password_path_for(resource)
+    super(resource)
+  end
 
-#   # The path used after sending reset password instructions
-#   def after_sending_reset_password_instructions_path_for(resource_name)
-#     super(resource_name)
-#   end
- end
+  # The path used after sending reset password instructions
+  def after_sending_reset_password_instructions_path_for(resource_name)
+    super(resource_name)
+  end
+end

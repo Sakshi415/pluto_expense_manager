@@ -12,30 +12,26 @@ class IncomesController < ApplicationController
   end
 
   def create
-    income_params_with_projected = income_params.merge(income_type: 'projected')
+    @income = current_user.incomes.new(income_params)
 
-    actual_income = current_user.incomes.new(income_params)
-    projected_income = current_user.incomes.new(income_params_with_projected)
-
-    if actual_income.save && projected_income.save
-      update_future_incomes(actual_income)
-      render json: actual_income, status: :created
+    if @income.save
+      # update_future_incomes(income)
+      render json: @income, status: :created
     else
-      errors = actual_income.errors.merge(projected_income.errors)
-      render json: errors, status: :unprocessable_entity
+      render json: {message: @income.errors.full_messages}, status: :unprocessable_entity
     end
   end
 
   def update
     if @income.update(income_params)
-      if @income.actual_income?
-        update_future_incomes(@income)
-      elsif @income.projected_income?
-        update_next_occurrence_for_projected(@income.month)
-      end
+      # if @income.actual_income?
+      #   update_future_incomes(@income)
+      # elsif @income.projected_income?
+      #   update_next_occurrence_for_projected(@income.month)
+      # end
       render json: @income
     else
-      render json: @income.errors, status: :unprocessable_entity
+      render json: {message: @income.errors.full_messages}, status: :unprocessable_entity
     end
   end
 
@@ -61,9 +57,6 @@ class IncomesController < ApplicationController
       render json: { error: 'Failed to update projected incomes' }, status: :unprocessable_entity
     end
   end
-  
-  
-  
   
   private
 

@@ -12,23 +12,23 @@ class IncomesController < ApplicationController
   end
 
   def create
-    @income = current_user.incomes.new(income_params)
-
-    if @income.save
-      # update_future_incomes(income)
-      render json: @income, status: :created
-    else
-      render json: {message: @income.errors.full_messages}, status: :unprocessable_entity
+    begin
+      Income.transaction do
+        @incomes = current_user.incomes.create!(income_params)
+      end
+    rescue ActiveRecord::RecordInvalid => exception
+      @incomes = {
+        error: {
+          status: 422,
+          message: exception
+        }
+      }
     end
+    render json: @incomes
   end
 
   def update
     if @income.update(income_params)
-      # if @income.actual_income?
-      #   update_future_incomes(@income)
-      # elsif @income.projected_income?
-      #   update_next_occurrence_for_projected(@income.month)
-      # end
       render json: @income
     else
       render json: {message: @income.errors.full_messages}, status: :unprocessable_entity
@@ -65,106 +65,6 @@ class IncomesController < ApplicationController
   end
 
   def income_params
-    params.require(:income).permit(:label, :month, :source, :frequency, :amount, :income_type)
-  end
-
-  def update_future_incomes(income)
-    case income.frequency.to_sym
-    when :monthly
-      update_monthly_incomes(income)
-    when :weekly
-      update_weekly_incomes(income)
-    when :quarterly
-      update_quarterly_incomes(income)
-    when :annually
-      update_annual_incomes(income)
-    when :alternate_months
-      update_alternate_month_incomes(income)
-    else
-      # For other frequencies, no need to update future incomes.
-      return
-    end
-  end
-
-  def update_monthly_incomes(income)
-    next_occurrence = income.month + 1.month
-
-    while next_occurrence <= Date.today
-      update_next_occurrence_for_actual(next_occurrence, income)
-      update_next_occurrence_for_projected(next_occurrence, income)
-      next_occurrence += 1.month
-    end
-  end
-
-  def update_weekly_incomes(income)
-    next_occurrence = income.month + 1.week
-
-    while next_occurrence <= Date.today
-      update_next_occurrence_for_actual(next_occurrence, income)
-      update_next_occurrence_for_projected(next_occurrence, income)
-      next_occurrence += 1.week
-    end
-  end
-
-  def update_quarterly_incomes(income)
-    next_occurrence = income.month + 3.months
-
-    while next_occurrence <= Date.today
-      update_next_occurrence_for_actual(next_occurrence, income)
-      update_next_occurrence_for_projected(next_occurrence, income)
-      next_occurrence += 3.months
-    end
-  end
-
-  def update_annual_incomes(income)
-    next_occurrence = income.month + 1.year
-
-    while next_occurrence <= Date.today
-      update_next_occurrence_for_actual(next_occurrence, income)
-      update_next_occurrence_for_projected(next_occurrence, income)
-      next_occurrence += 1.year
-    end
-  end
-
-  def update_alternate_month_incomes(income)
-    next_occurrence = income.month + 2.months
-
-    while next_occurrence <= Date.today
-      update_next_occurrence_for_actual(next_occurrence, income)
-      update_next_occurrence_for_projected(next_occurrence, income)
-      next_occurrence += 2.months
-    end
-  end
-
-  def update_next_occurrence_for_actual(next_occurrence, income)
-    next_income = current_user.incomes.find_by(frequency: income.frequency, month: next_occurrence, income_type: 'actual')
-    if next_income
-      next_income.update(amount: next_income.amount + income.amount)
-    else
-      current_user.incomes.create(
-        label: income.label,
-        month: next_occurrence,
-        source: income.source,
-        frequency: income.frequency,
-        amount: income.amount,
-        income_type: 'actual'
-      )
-    end
-  end
-
-  def update_next_occurrence_for_projected(next_occurrence, income)
-    next_income = current_user.incomes.find_by(frequency: income.frequency, month: next_occurrence, income_type: 'projected')
-    if next_income
-      next_income.update(amount: next_income.amount + income.amount)
-    else
-      current_user.incomes.create(
-        label: income.label,
-        month: next_occurrence,
-        source: income.source,
-        frequency: income.frequency,
-        amount: income.amount,
-        income_type: 'projected'
-      )
-    end
+    params.permit(income: [:label, :month, :source, :frequency, :amount, :income_type]).require(:income)
   end
 end

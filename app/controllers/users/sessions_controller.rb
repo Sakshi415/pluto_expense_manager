@@ -6,7 +6,7 @@ class Users::SessionsController < Devise::SessionsController
 
 
   def create
-    user = User.find_by(email: params[:username])
+    user = User.find_by(email: params[:email])
 
     if user&.valid_password?(params[:password])
       token = JWT.encode(
@@ -16,7 +16,7 @@ class Users::SessionsController < Devise::SessionsController
       )
       render json: { access_token: token, user: user }
     else
-      Rails.logger.debug("Invalid login attempt for email: #{params[:username]}")
+      Rails.logger.debug("Invalid login attempt for email: #{params[:email]}")
       render json: { error: 'Invalid email or password' }, status: :unprocessable_entity
     end
   end

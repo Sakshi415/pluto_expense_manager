@@ -15,6 +15,9 @@ class Income < ApplicationRecord
       actual: 'actual',
       projected: 'projected'
     }, _default: 'actual', _suffix: true # This allows you to call actual_income? and projected_income? methods
+
+    scope :actual, -> {where(income_type: "actual")}
+    scope :projected, -> {where(income_type: "projected")}
   
     def calculate_income_and_update_next_occurrence
       case frequency.to_sym

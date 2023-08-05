@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <div style="border: 1px solid #c5c5c5; margin: auto; background-color: white; width: 100%; max-width: 910px;">
+      <div class="container">
+        <div class="row">
+          <div class="col-12" style="padding: 30px">
+            <h2>Hi <%= @user.name %>,</h2>
+            <p>Income has been generated for <%= @income.month.strftime("%d %b %Y") %>, please find details below:</p>
+            <table border="1px" width="100%">
+              <thead>
+                <tr>
+                  <th>Income ID</th>
+                  <th>Income Type</th>
+                  <th>Source</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="text-align: center;">
+                  <td><%= @income.id %></td>
+                  <td><%= @income.income_type&.humanize %></td>
+                  <td><%= @income.source&.humanize %></td>
+                  <td><%= @income.amount %></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

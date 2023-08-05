@@ -8,6 +8,7 @@ class User < ApplicationRecord
 
   #attr_accessor :reset_password_token, :reset_password_sent_at
   has_many :incomes, dependent: :destroy
+  has_many :expenses, dependent: :destroy
 
   
   def generate_password_token!

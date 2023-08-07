@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :db_details]
+  before_action :set_user, only: [:show, :db_details, :transactions]
   before_action :authenticate_user! # Add this line to ensure user authentication
 
   def show
@@ -34,6 +34,34 @@ class UsersController < ApplicationController
     response_hash[:incomes] = @incomes
     response_hash[:expenses] = @expenses
     render json: response_hash
+  end
+
+  def transactions
+    if params[:start_date].present? && params[:end_date].present?
+      start_time = params[:start_date].to_time
+      end_time = params[:end_date].to_time
+    else
+      start_time = Time.zone.now.beginning_of_month
+      end_time = Time.zone.now
+    end
+    @incomes = @user.incomes.where(month: start_time..end_time)
+    @expenses = @user.expenses.where(date: start_time..end_time)
+    if params[:type].present?
+      if params[:type] == "income"
+        income_and_expenses = @incomes.sort_by(&:created_at)
+      elsif params[:type] == "expense"
+        income_and_expenses = @expenses.sort_by(&:created_at)
+      else
+        income_and_expenses = "missing_params"
+      end
+    else
+      income_and_expenses = (@incomes+@expenses).sort_by(&:created_at)
+    end
+    if income_and_expenses == "missing_params"
+      render json: {message: "Params are missing."}, status: :unprocessable_entity
+    else
+      render json: IncomeExpenseSerializer.new(income_and_expenses).serializable_hash
+    end
   end
 
   # def index

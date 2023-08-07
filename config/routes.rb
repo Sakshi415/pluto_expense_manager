@@ -36,5 +36,6 @@ Rails.application.routes.draw do
   resources :expenses
   resources :users do
     get 'db_details', on: :member
+    get 'transactions', on: :member
   end
 end

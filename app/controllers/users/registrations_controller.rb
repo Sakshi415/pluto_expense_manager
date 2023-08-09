@@ -11,7 +11,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     build_resource(sign_up_params)
     resource.save
     if resource.persisted?
-      render json: { status: 'success', data: resource }, status: :created
+      render json: { message: "A message with a confirmation link has been sent to your email address. Please follow the link to activate your account." }, status: :created
     else
       render json: { status: 'error', errors: resource.errors }, status: :unprocessable_entity
     end

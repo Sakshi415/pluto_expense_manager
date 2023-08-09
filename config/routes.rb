@@ -21,7 +21,6 @@ Rails.application.routes.draw do
 
     # New route to show user details
     get '/users/:id', to: 'users#show', as: 'user'
-
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -33,5 +32,10 @@ Rails.application.routes.draw do
     collection do
       put :update_projected_income
     end
+  end
+  resources :expenses
+  resources :users do
+    get 'db_details', on: :member
+    get 'transactions', on: :member
   end
 end

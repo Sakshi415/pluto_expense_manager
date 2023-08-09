@@ -3,11 +3,12 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
-  devise :database_authenticatable, :registerable, :recoverable, :validatable,
+  devise :database_authenticatable, :registerable, :recoverable, :validatable, :confirmable,
          :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
 
   #attr_accessor :reset_password_token, :reset_password_sent_at
   has_many :incomes, dependent: :destroy
+  has_many :expenses, dependent: :destroy
 
   
   def generate_password_token!

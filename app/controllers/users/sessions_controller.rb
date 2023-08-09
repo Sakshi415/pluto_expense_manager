@@ -6,18 +6,21 @@ class Users::SessionsController < Devise::SessionsController
 
 
   def create
-    user = User.find_by(email: params[:username])
-
-    if user&.valid_password?(params[:password])
-      token = JWT.encode(
-        { user_id: user.id, email: user.email, name: user.name },
-        Devise.secret_key,
-        'HS256'
-      )
-      render json: { access_token: token, user: user }
+    user = User.find_by(email: params[:email])
+    if user.confirmed_at.present?
+      if user&.valid_password?(params[:password])
+        token = JWT.encode(
+          { user_id: user.id, email: user.email, name: user.name },
+          Devise.secret_key,
+          'HS256'
+        )
+        render json: { access_token: token, user: user }
+      else
+        Rails.logger.debug("Invalid login attempt for email: #{params[:email]}")
+        render json: { error: 'Invalid email or password' }, status: :unprocessable_entity
+      end
     else
-      Rails.logger.debug("Invalid login attempt for email: #{params[:username]}")
-      render json: { error: 'Invalid email or password' }, status: :unprocessable_entity
+      render json: { error: 'Your account is not activated yet.' }, status: :unprocessable_entity
     end
   end
 

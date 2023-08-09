@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_05_064754) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_07_072350) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -32,13 +32,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_05_064754) do
   create_table "incomes", force: :cascade do |t|
     t.bigint "user_id"
     t.string "label"
-    t.date "month"
     t.string "source"
     t.string "frequency"
     t.decimal "amount"
     t.string "income_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "date"
     t.index ["user_id"], name: "index_incomes_on_user_id"
   end
 

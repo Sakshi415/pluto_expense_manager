@@ -3,11 +3,7 @@ class IncomeExpenseSerializer
   attributes :label, :frequency, :amount, :source, :created_at, :updated_at
 
   attribute :date do |object|
-    if object.class.name == "Income"
-      object.month
-    elsif object.class.name == "Expense"
-      object.date.to_date
-    end
+    object.date.to_date
   end
 
   attribute :object_type do |object|

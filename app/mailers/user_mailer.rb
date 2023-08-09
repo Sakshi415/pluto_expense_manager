@@ -15,7 +15,7 @@ class UserMailer < ApplicationMailer
   def income_generated(income)
     @income = income
     @user = income.user
-    mail(to: @user.email, subject: "Income Generated for #{@income.month.strftime("%d %b %Y")}.")
+    mail(to: @user.email, subject: "Income Generated for #{@income.date.strftime("%d %b %Y")}.")
   end
 
   def expense_generated(expense)

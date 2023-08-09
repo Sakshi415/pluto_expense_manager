@@ -3,7 +3,7 @@ class Income::DailyIncomesJob < ApplicationJob
   def perform
     @incomes = Income.all
     @incomes.each do |income|
-      date = income.month
+      date = income.date
       frequency = income.frequency
       if frequency == "one_time"
         next_occurrence_date = nil
@@ -22,7 +22,7 @@ class Income::DailyIncomesJob < ApplicationJob
       end
       if next_occurrence_date == Date.today
         new_income = income.deep_dup
-        new_income.month = Date.today
+        new_income.date = Date.today
         if new_income.save
           UserMailer.income_generated(new_income).deliver_now
         end

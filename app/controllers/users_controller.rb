@@ -16,7 +16,7 @@ class UsersController < ApplicationController
       start_time = Time.zone.now.beginning_of_month
       end_time = Time.zone.now
     end
-    @incomes = @user.incomes.where(month: start_time..end_time)
+    @incomes = @user.incomes.where(date: start_time..end_time)
     @expenses = @user.expenses.where(date: start_time..end_time)
     total_incomes_amount = @incomes.sum(:amount)
     total_expenses_amount = @expenses.sum(:amount)
@@ -44,18 +44,18 @@ class UsersController < ApplicationController
       start_time = Time.zone.now.beginning_of_month
       end_time = Time.zone.now
     end
-    @incomes = @user.incomes.where(month: start_time..end_time)
+    @incomes = @user.incomes.where(date: start_time..end_time)
     @expenses = @user.expenses.where(date: start_time..end_time)
     if params[:type].present?
       if params[:type] == "income"
-        income_and_expenses = @incomes.sort_by(&:created_at)
+        income_and_expenses = @incomes.sort_by(&:date).reverse
       elsif params[:type] == "expense"
-        income_and_expenses = @expenses.sort_by(&:created_at)
+        income_and_expenses = @expenses.sort_by(&:date).reverse
       else
         income_and_expenses = "missing_params"
       end
     else
-      income_and_expenses = (@incomes+@expenses).sort_by(&:created_at)
+      income_and_expenses = (@incomes+@expenses).sort_by(&:date).reverse
     end
     if income_and_expenses == "missing_params"
       render json: {message: "Params are missing."}, status: :unprocessable_entity

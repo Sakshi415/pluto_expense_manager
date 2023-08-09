@@ -50,7 +50,7 @@ class IncomesController < ApplicationController
   
     if projected_incomes.update(income_params.permit(:label, :amount, :source))
       projected_incomes.each do |projected_income|
-        update_next_occurrence_for_projected(projected_income.month, projected_income)
+        update_next_occurrence_for_projected(projected_income.date, projected_income)
       end
       render json: { message: 'Projected incomes updated successfully' }, status: :ok
     else
@@ -65,6 +65,6 @@ class IncomesController < ApplicationController
   end
 
   def income_params
-    params.permit(income: [:label, :month, :source, :frequency, :amount, :income_type]).require(:income)
+    params.permit(income: [:label, :date, :source, :frequency, :amount, :income_type]).require(:income)
   end
 end
